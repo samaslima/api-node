@@ -2,6 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+// Models
+const Product = require('./models/product-model');
+
+// Rotas
 const index = require('./routes/index');
 const product = require('./routes/product');
 
