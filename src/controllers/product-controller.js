@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Product = mongoose.model('Product');
+const repository = require('../repositories/product-repository');
 
 
 exports.get = findAll = ('/', (req, res, next) => {
-    Product.find({ active: true }, 'title price slug')
+    repository.get()
         .then(data => {
             res.status(200).send(data);
         })
@@ -13,7 +14,7 @@ exports.get = findAll = ('/', (req, res, next) => {
 })
 
 exports.getBySlug = findBySlug = ('/:slug', (req, res, next) => {
-    Product.findOne({ slug: req.params.slug, active: true }, 'title description price slug tags')
+    repository.getBySlug(req.params.slug)
         .then(data => {
             res.status(200).send(data);
         })
@@ -23,7 +24,7 @@ exports.getBySlug = findBySlug = ('/:slug', (req, res, next) => {
 })
 
 exports.getById = findById = ('/:id', (req, res, next) => {
-    Product.findById(req.params.id)
+    repository.getById(req.params.id)
         .then(data => {
             res.status(200).send(data);
         })
@@ -33,9 +34,7 @@ exports.getById = findById = ('/:id', (req, res, next) => {
 })
 
 exports.post = create = ('/', (req, res, next) => {
-    const product = new Product(req.body);
-
-    product.save()
+    repository.post(req.body)
         .then(x => {
             res.status(201).send({ message: 'Produto cadastrado com sucesso!'});
         })
@@ -48,15 +47,7 @@ exports.post = create = ('/', (req, res, next) => {
 });
 
 exports.put = update = ('/:id', (req, res, next) => {
-    Product
-        .findByIdAndUpdate(req.params.id, {
-            $set: {
-                title: req.body.title,
-                description: req.body.description,
-                slug: req.body.slug,
-                price: req.body.price
-            }
-        })
+    repository.put(req.params.id, req.body) 
         .then(x => {
             res.status(201).send({ message: 'Produto atualizado com sucesso!'});
         })
@@ -69,8 +60,7 @@ exports.put = update = ('/:id', (req, res, next) => {
 });
 
 exports.delete = remove = ('/', (req, res, next) => {
-    Product
-        .findByIdAndRemove(req.body.id)
+    repository.delete(req.body.id)
         .then(x => {
             res.status(200).send({ message: 'Produto removido com sucesso!'});
         })
